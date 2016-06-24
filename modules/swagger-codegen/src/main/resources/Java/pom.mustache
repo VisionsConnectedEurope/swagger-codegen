@@ -107,12 +107,46 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+	<repositories>
+		<repository>
+			<id>deploymentRelease</id>
+			<url>http://maven.vcdev.lan/nexus/content/repositories/releases</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>deploymentSnapshot</id>
+			<name>Internal Releases</name>
+			<url>http://maven.vcdev.lan/nexus/content/repositories/snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+	<distributionManagement>
+		<repository>
+			<id>deployment</id>
+			<url>http://maven.vcdev.lan/nexus/content/repositories/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>deployment</id>
+			<name>Internal Releases</name>
+			<url>http://maven.vcdev.lan/nexus/content/repositories/snapshots/</url>
+		</snapshotRepository>
+	</distributionManagement>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <swagger-annotations-version>1.5.4</swagger-annotations-version>
-    <jersey-version>1.18</jersey-version>
-    <jackson-version>2.4.2</jackson-version>
-    <jodatime-version>2.3</jodatime-version>
+    <swagger-annotations-version>1.5.9</swagger-annotations-version>
+    <jersey-version>1.19.1</jersey-version>
+    <jackson-version>2.6.7</jackson-version>
+    <jodatime-version>2.9.4</jodatime-version>
     <maven-plugin-version>1.0.0</maven-plugin-version>
     <junit-version>4.8.1</junit-version>
   </properties>
