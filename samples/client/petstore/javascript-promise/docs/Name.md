@@ -3,6 +3,9 @@
 ## Properties
 Name | Type | Description | Notes
 ------------ | ------------- | ------------- | -------------
-**name** | **Integer** |  | [optional] 
+**name** | **Number** |  | 
+**snakeCase** | **Number** |  | [optional] 
+**property** | **String** |  | [optional] 
+**_123Number** | **Number** |  | [optional] 
 
 

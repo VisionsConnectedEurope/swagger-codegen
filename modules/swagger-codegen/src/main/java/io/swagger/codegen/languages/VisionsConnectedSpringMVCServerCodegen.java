@@ -2,54 +2,64 @@ package io.swagger.codegen.languages;
 
 import io.swagger.codegen.*;
 import io.swagger.models.Operation;
+import io.swagger.models.Path;
+import io.swagger.models.Swagger;
+import org.apache.commons.lang3.BooleanUtils;
 
 import java.io.File;
 import java.util.*;
 
-public class VisionsConnectedSpringMVCServerCodegen extends JavaClientCodegen {
+public class VisionsConnectedSpringMVCServerCodegen extends AbstractJavaCodegen {
+    public static final String DEFAULT_LIBRARY = "spring-boot";
+    public static final String TITLE = "title";
     public static final String CONFIG_PACKAGE = "configPackage";
-    protected String title = "VC API Server";
-    protected String configPackage = "";
-    protected String templateFileName = "api.mustache";
+    public static final String BASE_PACKAGE = "basePackage";
+    public static final String INTERFACE_ONLY = "interfaceOnly";
+    public static final String SINGLE_CONTENT_TYPES = "singleContentTypes";
+    public static final String JAVA_8 = "java8";
+    public static final String ASYNC = "async";
+    public static final String SPRING_MVC_LIBRARY = "spring-mvc";
+    public static final String SPRING_CLOUD_LIBRARY = "spring-cloud";
+
+    protected String title = "swagger-petstore";
+    protected String configPackage = "io.swagger.configuration";
+    protected String basePackage = "io.swagger";
+    protected boolean interfaceOnly = false;
+    protected boolean singleContentTypes = false;
+    protected boolean java8 = false;
+    protected boolean async = false;
 
     public VisionsConnectedSpringMVCServerCodegen() {
         super();
-        outputFolder = "generated-code/VisionsConnectedJavaSpringMVC";
-        modelTemplateFiles.put("model.mustache", ".java");
-        apiTemplateFiles.put(templateFileName, ".java");
+        outputFolder = "generated-code/VisionsConnectedJavaSpringMvc";
+        apiTestTemplateFiles.clear(); // TODO: add test template
         embeddedTemplateDir = templateDir = "VisionsConnectedJavaSpringMVC";
         apiPackage = "io.swagger.api";
         modelPackage = "io.swagger.model";
-        configPackage = "io.swagger.configuration";
         invokerPackage = "io.swagger.api";
-        artifactId = "swagger-visionsconnected-spring-mvc-server";
+        artifactId = "swagger-visionsconnected-spring";
 
-        additionalProperties.put(CodegenConstants.INVOKER_PACKAGE, invokerPackage);
-        additionalProperties.put(CodegenConstants.GROUP_ID, groupId);
-        additionalProperties.put(CodegenConstants.ARTIFACT_ID, artifactId);
-        additionalProperties.put(CodegenConstants.ARTIFACT_VERSION, artifactVersion);
-        additionalProperties.put("title", title);
-        additionalProperties.put(CodegenConstants.API_PACKAGE, apiPackage);
         additionalProperties.put(CONFIG_PACKAGE, configPackage);
+        additionalProperties.put(BASE_PACKAGE, basePackage);
 
-        languageSpecificPrimitives = new HashSet<String>(
-                Arrays.asList(
-                        "byte[]",
-                        "String",
-                        "boolean",
-                        "Boolean",
-                        "Double",
-                        "Integer",
-                        "Long",
-                        "Float")
-        );
-
+        cliOptions.add(new CliOption(TITLE, "server title name or client service name"));
         cliOptions.add(new CliOption(CONFIG_PACKAGE, "configuration package for generated code"));
+        cliOptions.add(new CliOption(BASE_PACKAGE, "base package for generated code"));
+        cliOptions.add(CliOption.newBoolean(INTERFACE_ONLY, "Whether to generate only API interface stubs without the server files."));
+        cliOptions.add(CliOption.newBoolean(SINGLE_CONTENT_TYPES, "Whether to select only one produces/consumes content-type by operation."));
+        cliOptions.add(CliOption.newBoolean(JAVA_8, "use java8 default interface"));
+        cliOptions.add(CliOption.newBoolean(ASYNC, "use async Callable controllers"));
 
-        supportedLibraries.clear();
-        supportedLibraries.put(DEFAULT_LIBRARY, "Default Spring MVC server stub.");
-        supportedLibraries.put("j8-async", "Use async servlet feature and Java 8's default interface. Generating interface with service " +
-                "declaration is useful when using Maven plugin. Just provide a implementation with @Controller to instantiate service.");
+        supportedLibraries.put(DEFAULT_LIBRARY, "Spring-boot Server application using the SpringFox integration.");
+        supportedLibraries.put(SPRING_MVC_LIBRARY, "Spring-MVC Server application using the SpringFox integration.");
+        supportedLibraries.put(SPRING_CLOUD_LIBRARY, "Spring-Cloud-Feign client with Spring-Boot auto-configured settings.");
+        setLibrary(SPRING_MVC_LIBRARY);
+
+        CliOption library = new CliOption(CodegenConstants.LIBRARY, "library template (sub-template) to use");
+        library.setDefault(SPRING_MVC_LIBRARY);
+        library.setEnum(supportedLibraries);
+        library.setDefault(SPRING_MVC_LIBRARY);
+        cliOptions.add(library);
     }
 
     @Override
@@ -64,42 +74,107 @@ public class VisionsConnectedSpringMVCServerCodegen extends JavaClientCodegen {
 
     @Override
     public String getHelp() {
-        return "Generates a Java Spring-MVC Server application modified fo use at VisionsConnected using the SpringFox integration.";
+        return "Generates a Java SpringBoot Server application using the SpringFox integration.";
     }
 
     @Override
     public void processOpts() {
         super.processOpts();
 
+        // clear model and api doc template as this codegen
+        // does not support auto-generated markdown doc at the moment
+        //TODO: add doc templates
+        modelDocTemplateFiles.remove("model_doc.mustache");
+        apiDocTemplateFiles.remove("api_doc.mustache");
+
+        if (additionalProperties.containsKey(TITLE)) {
+            this.setTitle((String) additionalProperties.get(TITLE));
+        }
+
         if (additionalProperties.containsKey(CONFIG_PACKAGE)) {
             this.setConfigPackage((String) additionalProperties.get(CONFIG_PACKAGE));
         }
 
-        supportingFiles.clear();
+        if (additionalProperties.containsKey(BASE_PACKAGE)) {
+            this.setBasePackage((String) additionalProperties.get(BASE_PACKAGE));
+        }
+
+        if (additionalProperties.containsKey(INTERFACE_ONLY)) {
+            this.setInterfaceOnly(Boolean.valueOf(additionalProperties.get(INTERFACE_ONLY).toString()));
+        }
+
+        if (additionalProperties.containsKey(SINGLE_CONTENT_TYPES)) {
+            this.setSingleContentTypes(Boolean.valueOf(additionalProperties.get(SINGLE_CONTENT_TYPES).toString()));
+        }
+
+        if (additionalProperties.containsKey(JAVA_8)) {
+            this.setJava8(Boolean.valueOf(additionalProperties.get(JAVA_8).toString()));
+        }
+
+        if (additionalProperties.containsKey(ASYNC)) {
+            this.setAsync(Boolean.valueOf(additionalProperties.get(ASYNC).toString()));
+        }
+
         supportingFiles.add(new SupportingFile("pom.mustache", "", "pom.xml"));
         supportingFiles.add(new SupportingFile("README.mustache", "", "README.md"));
-        supportingFiles.add(new SupportingFile("apiException.mustache",
-                (sourceFolder + File.separator + apiPackage).replace(".", File.separator), "ApiException.java"));
-        supportingFiles.add(new SupportingFile("apiOriginFilter.mustache",
-                (sourceFolder + File.separator + apiPackage).replace(".", File.separator), "ApiOriginFilter.java"));
-        supportingFiles.add(new SupportingFile("apiResponseMessage.mustache",
-                (sourceFolder + File.separator + apiPackage).replace(".", File.separator), "ApiResponseMessage.java"));
-        supportingFiles.add(new SupportingFile("notFoundException.mustache",
-                (sourceFolder + File.separator + apiPackage).replace(".", File.separator), "NotFoundException.java"));
-        supportingFiles.add(new SupportingFile("errorSpec.mustache",
-                (sourceFolder + File.separator + apiPackage).replace(".", File.separator), "ErrorSpec.java"));
 
-        supportingFiles.add(new SupportingFile("swaggerConfig.mustache",
-                (sourceFolder + File.separator + configPackage).replace(".", File.separator), "SwaggerConfig.java"));
-        supportingFiles.add(new SupportingFile("webApplication.mustache",
-                (sourceFolder + File.separator + configPackage).replace(".", File.separator), "WebApplication.java"));
-        supportingFiles.add(new SupportingFile("webMvcConfiguration.mustache",
-                (sourceFolder + File.separator + configPackage).replace(".", File.separator), "WebMvcConfiguration.java"));
-        supportingFiles.add(new SupportingFile("swaggerUiConfiguration.mustache",
-                (sourceFolder + File.separator + configPackage).replace(".", File.separator), "SwaggerUiConfiguration.java"));
-        supportingFiles.add(new SupportingFile("swagger.properties",
-                ("src.main.resources").replace(".", File.separator), "swagger.properties"));
+        if (!this.interfaceOnly) {
+            if (library.equals(DEFAULT_LIBRARY)) {
+                supportingFiles.add(new SupportingFile("homeController.mustache",
+                    (sourceFolder + File.separator + configPackage).replace(".", java.io.File.separator), "HomeController.java"));
+                supportingFiles.add(new SupportingFile("swagger2SpringBoot.mustache",
+                    (sourceFolder + File.separator + basePackage).replace(".", java.io.File.separator), "Swagger2SpringBoot.java"));
+                supportingFiles.add(new SupportingFile("application.mustache",
+                    ("src.main.resources").replace(".", java.io.File.separator), "application.properties"));
+            }
+            if (library.equals(SPRING_MVC_LIBRARY)) {
+                //apiTemplateFiles.put("api.mustache", "Api.java");
+                supportingFiles.add(new SupportingFile("errorSpec.mustache",
+                    (sourceFolder + File.separator + apiPackage).replace(".", File.separator), "ErrorSpec.java"));
+                supportingFiles.add(new SupportingFile("apiException.mustache",
+                    (sourceFolder + File.separator + apiPackage).replace(".", java.io.File.separator), "ApiException.java"));
+                supportingFiles.add(new SupportingFile("apiResponseMessage.mustache",
+                    (sourceFolder + File.separator + apiPackage).replace(".", java.io.File.separator), "ApiResponseMessage.java"));
+                supportingFiles.add(new SupportingFile("notFoundException.mustache",
+                    (sourceFolder + File.separator + apiPackage).replace(".", java.io.File.separator), "NotFoundException.java"));
+                supportingFiles.add(new SupportingFile("apiOriginFilter.mustache",
+                    (sourceFolder + File.separator + apiPackage).replace(".", java.io.File.separator), "ApiOriginFilter.java"));
+            }
+            if (library.equals(SPRING_CLOUD_LIBRARY)) {
+                supportingFiles.add(new SupportingFile("apiKeyRequestInterceptor.mustache",
+                    (sourceFolder + File.separator + configPackage).replace(".", java.io.File.separator), "ApiKeyRequestInterceptor.java"));
+                supportingFiles.add(new SupportingFile("clientConfiguration.mustache",
+                    (sourceFolder + File.separator + configPackage).replace(".", java.io.File.separator), "ClientConfiguration.java"));
+                apiTemplateFiles.put("apiClient.mustache", "Client.java");
+                if (!additionalProperties.containsKey(SINGLE_CONTENT_TYPES)) {
+                    additionalProperties.put(SINGLE_CONTENT_TYPES, "true");
+                    this.setSingleContentTypes(true);
 
+                }
+
+            } else {
+                //apiTemplateFiles.put("api.mustache", "SApi.java");
+
+                supportingFiles.add(new SupportingFile("errorSpec.mustache",
+                    (sourceFolder + File.separator + apiPackage).replace(".", File.separator), "ErrorSpec.java"));
+                supportingFiles.add(new SupportingFile("apiException.mustache",
+                    (sourceFolder + File.separator + apiPackage).replace(".", java.io.File.separator), "ApiException.java"));
+                supportingFiles.add(new SupportingFile("apiResponseMessage.mustache",
+                    (sourceFolder + File.separator + apiPackage).replace(".", java.io.File.separator), "ApiResponseMessage.java"));
+                supportingFiles.add(new SupportingFile("notFoundException.mustache",
+                    (sourceFolder + File.separator + apiPackage).replace(".", java.io.File.separator), "NotFoundException.java"));
+                supportingFiles.add(new SupportingFile("apiOriginFilter.mustache",
+                    (sourceFolder + File.separator + apiPackage).replace(".", java.io.File.separator), "ApiOriginFilter.java"));
+            }
+        }
+
+        if (this.java8) {
+            additionalProperties.put("javaVersion", "1.8");
+            typeMapping.put("date", "LocalDate");
+            typeMapping.put("DateTime", "OffsetDateTime");
+            importMapping.put("LocalDate", "java.time.LocalDate");
+            importMapping.put("OffsetDateTime", "java.time.OffsetDateTime");
+        }
     }
 
     @Override
@@ -116,9 +191,6 @@ public class VisionsConnectedSpringMVCServerCodegen extends JavaClientCodegen {
         if (basePath == "") {
             basePath = "default";
         } else {
-            if (co.path.startsWith("/" + basePath)) {
-                co.path = co.path.substring(("/" + basePath).length());
-            }
             co.subresourceOperation = !co.path.isEmpty();
         }
         List<CodegenOperation> opList = operations.get(basePath);
@@ -128,6 +200,67 @@ public class VisionsConnectedSpringMVCServerCodegen extends JavaClientCodegen {
         }
         opList.add(co);
         co.baseName = basePath;
+    }
+
+    @Override
+    public void preprocessSwagger(Swagger swagger) {
+        super.preprocessSwagger(swagger);
+        if ("/".equals(swagger.getBasePath())) {
+            swagger.setBasePath("");
+        }
+
+        if(!additionalProperties.containsKey(TITLE)) {
+            // From the title, compute a reasonable name for the package and the API
+            String title = swagger.getInfo().getTitle();
+
+            // Drop any API suffix
+            if (title != null) {
+                title = title.trim().replace(" ", "-");
+                if (title.toUpperCase().endsWith("API")) {
+                    title = title.substring(0, title.length() - 3);
+                }
+
+                this.title = camelize(sanitizeName(title), true);
+            }
+            additionalProperties.put(TITLE, this.title);
+        }
+
+        String host = swagger.getHost();
+        String port = "8080";
+        if (host != null) {
+            String[] parts = host.split(":");
+            if (parts.length > 1) {
+                port = parts[1];
+            }
+        }
+
+        this.additionalProperties.put("serverPort", port);
+        if (swagger != null && swagger.getPaths() != null) {
+            for (String pathname : swagger.getPaths().keySet()) {
+                Path path = swagger.getPath(pathname);
+                if (path.getOperations() != null) {
+                    for (Operation operation : path.getOperations()) {
+                        if (operation.getTags() != null) {
+                            List<Map<String, String>> tags = new ArrayList<Map<String, String>>();
+                            for (String tag : operation.getTags()) {
+                                Map<String, String> value = new HashMap<String, String>();
+                                value.put("tag", tag);
+                                value.put("hasMore", "true");
+                                tags.add(value);
+                            }
+                            if (tags.size() > 0) {
+                                tags.get(tags.size() - 1).remove("hasMore");
+                            }
+                            if (operation.getTags().size() > 0) {
+                                String tag = operation.getTags().get(0);
+                                operation.setTags(Arrays.asList(tag));
+                            }
+                            operation.setVendorExtension("x-tags", tags);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     @Override
@@ -171,24 +304,20 @@ public class VisionsConnectedSpringMVCServerCodegen extends JavaClientCodegen {
                 }
             }
         }
-        if("j8-async".equals(getLibrary())) {
-            apiTemplateFiles.remove(this.templateFileName);
-            this.templateFileName = "api-j8-async.mustache";
-            apiTemplateFiles.put(this.templateFileName, ".java");
 
-            int originalPomFileIdx = -1;
-            for (int i = 0; i < supportingFiles.size(); i++) {
-                if ("pom.xml".equals(supportingFiles.get(i).destinationFilename)) {
-                    originalPomFileIdx = i;
-                    break;
+        return objs;
+    }
+
+    @Override
+    public Map<String, Object> postProcessSupportingFileData(Map<String, Object> objs) {
+        if(library.equals(SPRING_CLOUD_LIBRARY)) {
+            List<CodegenSecurity> authMethods = (List<CodegenSecurity>) objs.get("authMethods");
+            if (authMethods != null) {
+                for (CodegenSecurity authMethod : authMethods) {
+                    authMethod.name = camelize(sanitizeName(authMethod.name), true);
                 }
             }
-            if (originalPomFileIdx > -1) {
-                supportingFiles.remove(originalPomFileIdx);
-            }
-            supportingFiles.add(new SupportingFile("pom-j8-async.mustache", "", "pom.xml"));
         }
-
         return objs;
     }
 
@@ -201,30 +330,66 @@ public class VisionsConnectedSpringMVCServerCodegen extends JavaClientCodegen {
         return camelize(name) + "Api";
     }
 
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
     public void setConfigPackage(String configPackage) {
         this.configPackage = configPackage;
     }
 
+    public void setBasePackage(String configPackage) {
+        this.basePackage = configPackage;
+    }
+
+    public void setInterfaceOnly(boolean interfaceOnly) { this.interfaceOnly = interfaceOnly; }
+
+    public void setSingleContentTypes(boolean singleContentTypes) {
+        this.singleContentTypes = singleContentTypes;
+    }
+
+    public void setJava8(boolean java8) { this.java8 = java8; }
+
+    public void setAsync(boolean async) { this.async = async; }
+
     @Override
-    public Map<String, Object> postProcessModels(Map<String, Object> objs) {
-        // remove the import of "Object" to avoid compilation error
-        List<Map<String, String>> imports = (List<Map<String, String>>) objs.get("imports");
-        Iterator<Map<String, String>> iterator = imports.iterator();
-        while (iterator.hasNext()) {
-            String _import = iterator.next().get("import");
-            if (_import.endsWith(".Object")) iterator.remove();
+    public void postProcessModelProperty(CodegenModel model, CodegenProperty property) {
+        super.postProcessModelProperty(model, property);
+
+        if("null".equals(property.example)) {
+            property.example = null;
         }
+
+        //Add imports for Jackson
+        if(!BooleanUtils.toBoolean(model.isEnum)) {
+            model.imports.add("JsonProperty");
+
+            if(BooleanUtils.toBoolean(model.hasEnums)) {
+                model.imports.add("JsonValue");
+            }
+        }
+    }
+
+    @Override
+    public Map<String, Object> postProcessModelsEnum(Map<String, Object> objs) {
+        objs = super.postProcessModelsEnum(objs);
+
+        //Add imports for Jackson
+        List<Map<String, String>> imports = (List<Map<String, String>>)objs.get("imports");
         List<Object> models = (List<Object>) objs.get("models");
         for (Object _mo : models) {
             Map<String, Object> mo = (Map<String, Object>) _mo;
             CodegenModel cm = (CodegenModel) mo.get("model");
-            for (CodegenProperty var : cm.vars) {
-                // handle default value for enum, e.g. available => StatusEnum.available
-                if (var.isEnum && var.defaultValue != null && !"null".equals(var.defaultValue)) {
-                    var.defaultValue = var.datatypeWithEnum + "." + var.defaultValue;
-                }
+            // for enum model
+            if (Boolean.TRUE.equals(cm.isEnum) && cm.allowableValues != null) {
+                cm.imports.add(importMapping.get("JsonValue"));
+                Map<String, String> item = new HashMap<String, String>();
+                item.put("import", importMapping.get("JsonValue"));
+                imports.add(item);
             }
         }
+
         return objs;
     }
+
 }

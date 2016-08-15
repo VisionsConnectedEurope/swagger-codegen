@@ -123,7 +123,7 @@ public class NodeJSServerCodegen extends DefaultCodegen implements CodegenConfig
      */
     @Override
     public String getName() {
-        return "nodejs";
+        return "nodejs-server";
     }
 
     /**
@@ -278,7 +278,9 @@ public class NodeJSServerCodegen extends DefaultCodegen implements CodegenConfig
                         if(operation.getOperationId() == null) {
                             operation.setOperationId(getOrGenerateOperationId(operation, pathname, method.toString()));
                         }
-                        operation.getVendorExtensions().put("x-swagger-router-controller", toApiName(tag));
+                        if(operation.getVendorExtensions().get("x-swagger-router-controller") == null) {
+                            operation.getVendorExtensions().put("x-swagger-router-controller", sanitizeTag(tag));
+                        }
                     }
                 }
             }
@@ -311,5 +313,21 @@ public class NodeJSServerCodegen extends DefaultCodegen implements CodegenConfig
             operations.put("operationsByPath", opsByPathList);
         }
         return super.postProcessSupportingFileData(objs);
+    }
+
+    @Override
+    public String removeNonNameElementToCamelCase(String name) {
+        return removeNonNameElementToCamelCase(name, "[-:;#]");
+    }
+
+    @Override
+    public String escapeUnsafeCharacters(String input) {
+        return input.replace("*/", "*_/").replace("/*", "/_*");
+    }
+
+    @Override
+    public String escapeQuotationMark(String input) {
+        // remove " to avoid code injection
+        return input.replace("\"", "");
     }
 }

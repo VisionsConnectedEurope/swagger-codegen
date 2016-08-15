@@ -5,20 +5,17 @@ All URIs are relative to *http://petstore.swagger.io/v2*
 Method | HTTP request | Description
 ------------- | ------------- | -------------
 [**add_pet**](PetApi.md#add_pet) | **POST** /pet | Add a new pet to the store
-[**add_pet_using_byte_array**](PetApi.md#add_pet_using_byte_array) | **POST** /pet?testing_byte_array=true | Fake endpoint to test byte array in body parameter for adding a new pet to the store
 [**delete_pet**](PetApi.md#delete_pet) | **DELETE** /pet/{petId} | Deletes a pet
 [**find_pets_by_status**](PetApi.md#find_pets_by_status) | **GET** /pet/findByStatus | Finds Pets by status
 [**find_pets_by_tags**](PetApi.md#find_pets_by_tags) | **GET** /pet/findByTags | Finds Pets by tags
 [**get_pet_by_id**](PetApi.md#get_pet_by_id) | **GET** /pet/{petId} | Find pet by ID
-[**get_pet_by_id_in_object**](PetApi.md#get_pet_by_id_in_object) | **GET** /pet/{petId}?response=inline_arbitrary_object | Fake endpoint to test inline arbitrary object return by &#39;Find pet by ID&#39;
-[**pet_pet_idtesting_byte_arraytrue_get**](PetApi.md#pet_pet_idtesting_byte_arraytrue_get) | **GET** /pet/{petId}?testing_byte_array=true | Fake endpoint to test byte array return by &#39;Find pet by ID&#39;
 [**update_pet**](PetApi.md#update_pet) | **PUT** /pet | Update an existing pet
 [**update_pet_with_form**](PetApi.md#update_pet_with_form) | **POST** /pet/{petId} | Updates a pet in the store with form data
 [**upload_file**](PetApi.md#upload_file) | **POST** /pet/{petId}/uploadImage | uploads an image
 
 
 # **add_pet**
-> add_pet(opts)
+> add_pet(body)
 
 Add a new pet to the store
 
@@ -26,23 +23,24 @@ Add a new pet to the store
 
 ### Example
 ```ruby
+# load the gem
 require 'petstore'
-
+# setup authorization
 Petstore.configure do |config|
   # Configure OAuth2 access token for authorization: petstore_auth
-  config.access_token = "YOUR ACCESS TOKEN"
+  config.access_token = 'YOUR ACCESS TOKEN'
 end
 
-api = Petstore::PetApi.new
+api_instance = Petstore::PetApi.new
 
-opts = { 
-  body: Petstore::Pet.new # [Pet] Pet object that needs to be added to the store
-}
+body = Petstore::Pet.new # Pet | Pet object that needs to be added to the store
+
 
 begin
-  api.add_pet(opts)
+  #Add a new pet to the store
+  api_instance.add_pet(body)
 rescue Petstore::ApiError => e
-  puts "Exception when calling add_pet: #{e}"
+  puts "Exception when calling PetApi->add_pet: #{e}"
 end
 ```
 
@@ -50,7 +48,7 @@ end
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**Pet**](Pet.md)| Pet object that needs to be added to the store | [optional] 
+ **body** | [**Pet**](Pet.md)| Pet object that needs to be added to the store | 
 
 ### Return type
 
@@ -60,60 +58,10 @@ nil (empty response body)
 
 [petstore_auth](../README.md#petstore_auth)
 
-### HTTP reuqest headers
+### HTTP request headers
 
  - **Content-Type**: application/json, application/xml
- - **Accept**: application/json, application/xml
-
-
-
-# **add_pet_using_byte_array**
-> add_pet_using_byte_array(opts)
-
-Fake endpoint to test byte array in body parameter for adding a new pet to the store
-
-
-
-### Example
-```ruby
-require 'petstore'
-
-Petstore.configure do |config|
-  # Configure OAuth2 access token for authorization: petstore_auth
-  config.access_token = "YOUR ACCESS TOKEN"
-end
-
-api = Petstore::PetApi.new
-
-opts = { 
-  body: "B" # [String] Pet object in the form of byte array
-}
-
-begin
-  api.add_pet_using_byte_array(opts)
-rescue Petstore::ApiError => e
-  puts "Exception when calling add_pet_using_byte_array: #{e}"
-end
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **body** | **String**| Pet object in the form of byte array | [optional] 
-
-### Return type
-
-nil (empty response body)
-
-### Authorization
-
-[petstore_auth](../README.md#petstore_auth)
-
-### HTTP reuqest headers
-
- - **Content-Type**: application/json, application/xml
- - **Accept**: application/json, application/xml
+ - **Accept**: application/xml, application/json
 
 
 
@@ -126,25 +74,27 @@ Deletes a pet
 
 ### Example
 ```ruby
+# load the gem
 require 'petstore'
-
+# setup authorization
 Petstore.configure do |config|
   # Configure OAuth2 access token for authorization: petstore_auth
-  config.access_token = "YOUR ACCESS TOKEN"
+  config.access_token = 'YOUR ACCESS TOKEN'
 end
 
-api = Petstore::PetApi.new
+api_instance = Petstore::PetApi.new
 
-pet_id = 789 # [Integer] Pet id to delete
+pet_id = 789 # Integer | Pet id to delete
 
 opts = { 
-  api_key: "api_key_example" # [String] 
+  api_key: "api_key_example" # String | 
 }
 
 begin
-  api.delete_pet(pet_id, opts)
+  #Deletes a pet
+  api_instance.delete_pet(pet_id, opts)
 rescue Petstore::ApiError => e
-  puts "Exception when calling delete_pet: #{e}"
+  puts "Exception when calling PetApi->delete_pet: #{e}"
 end
 ```
 
@@ -163,15 +113,15 @@ nil (empty response body)
 
 [petstore_auth](../README.md#petstore_auth)
 
-### HTTP reuqest headers
+### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: application/json, application/xml
+ - **Accept**: application/xml, application/json
 
 
 
 # **find_pets_by_status**
-> Array&lt;Pet&gt; find_pets_by_status(opts)
+> Array&lt;Pet&gt; find_pets_by_status(status)
 
 Finds Pets by status
 
@@ -179,24 +129,25 @@ Multiple status values can be provided with comma separated strings
 
 ### Example
 ```ruby
+# load the gem
 require 'petstore'
-
+# setup authorization
 Petstore.configure do |config|
   # Configure OAuth2 access token for authorization: petstore_auth
-  config.access_token = "YOUR ACCESS TOKEN"
+  config.access_token = 'YOUR ACCESS TOKEN'
 end
 
-api = Petstore::PetApi.new
+api_instance = Petstore::PetApi.new
 
-opts = { 
-  status: ["available"] # [Array<String>] Status values that need to be considered for query
-}
+status = ["status_example"] # Array<String> | Status values that need to be considered for filter
+
 
 begin
-  result = api.find_pets_by_status(opts)
+  #Finds Pets by status
+  result = api_instance.find_pets_by_status(status)
   p result
 rescue Petstore::ApiError => e
-  puts "Exception when calling find_pets_by_status: #{e}"
+  puts "Exception when calling PetApi->find_pets_by_status: #{e}"
 end
 ```
 
@@ -204,7 +155,7 @@ end
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **status** | [**Array&lt;String&gt;**](String.md)| Status values that need to be considered for query | [optional] [default to available]
+ **status** | [**Array&lt;String&gt;**](String.md)| Status values that need to be considered for filter | 
 
 ### Return type
 
@@ -214,40 +165,41 @@ Name | Type | Description  | Notes
 
 [petstore_auth](../README.md#petstore_auth)
 
-### HTTP reuqest headers
+### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: application/json, application/xml
+ - **Accept**: application/xml, application/json
 
 
 
 # **find_pets_by_tags**
-> Array&lt;Pet&gt; find_pets_by_tags(opts)
+> Array&lt;Pet&gt; find_pets_by_tags(tags)
 
 Finds Pets by tags
 
-Muliple tags can be provided with comma seperated strings. Use tag1, tag2, tag3 for testing.
+Multiple tags can be provided with comma separated strings. Use tag1, tag2, tag3 for testing.
 
 ### Example
 ```ruby
+# load the gem
 require 'petstore'
-
+# setup authorization
 Petstore.configure do |config|
   # Configure OAuth2 access token for authorization: petstore_auth
-  config.access_token = "YOUR ACCESS TOKEN"
+  config.access_token = 'YOUR ACCESS TOKEN'
 end
 
-api = Petstore::PetApi.new
+api_instance = Petstore::PetApi.new
 
-opts = { 
-  tags: ["tags_example"] # [Array<String>] Tags to filter by
-}
+tags = ["tags_example"] # Array<String> | Tags to filter by
+
 
 begin
-  result = api.find_pets_by_tags(opts)
+  #Finds Pets by tags
+  result = api_instance.find_pets_by_tags(tags)
   p result
 rescue Petstore::ApiError => e
-  puts "Exception when calling find_pets_by_tags: #{e}"
+  puts "Exception when calling PetApi->find_pets_by_tags: #{e}"
 end
 ```
 
@@ -255,7 +207,7 @@ end
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **tags** | [**Array&lt;String&gt;**](String.md)| Tags to filter by | [optional] 
+ **tags** | [**Array&lt;String&gt;**](String.md)| Tags to filter by | 
 
 ### Return type
 
@@ -265,10 +217,10 @@ Name | Type | Description  | Notes
 
 [petstore_auth](../README.md#petstore_auth)
 
-### HTTP reuqest headers
+### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: application/json, application/xml
+ - **Accept**: application/xml, application/json
 
 
 
@@ -277,32 +229,31 @@ Name | Type | Description  | Notes
 
 Find pet by ID
 
-Returns a pet when ID &lt; 10.  ID &gt; 10 or nonintegers will simulate API error conditions
+Returns a single pet
 
 ### Example
 ```ruby
+# load the gem
 require 'petstore'
-
+# setup authorization
 Petstore.configure do |config|
-  # Configure OAuth2 access token for authorization: petstore_auth
-  config.access_token = "YOUR ACCESS TOKEN"
-
   # Configure API key authorization: api_key
-  config.api_key['api_key'] = "YOUR API KEY"
-  # Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to nil)
-  #config.api_key_prefix['api_key'] = "Token"
+  config.api_key['api_key'] = 'YOUR API KEY'
+  # Uncomment the following line to set a prefix for the API key, e.g. 'Bearer' (defaults to nil)
+  #config.api_key_prefix['api_key'] = 'Bearer'
 end
 
-api = Petstore::PetApi.new
+api_instance = Petstore::PetApi.new
 
-pet_id = 789 # [Integer] ID of pet that needs to be fetched
+pet_id = 789 # Integer | ID of pet to return
 
 
 begin
-  result = api.get_pet_by_id(pet_id)
+  #Find pet by ID
+  result = api_instance.get_pet_by_id(pet_id)
   p result
 rescue Petstore::ApiError => e
-  puts "Exception when calling get_pet_by_id: #{e}"
+  puts "Exception when calling PetApi->get_pet_by_id: #{e}"
 end
 ```
 
@@ -310,7 +261,7 @@ end
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **pet_id** | **Integer**| ID of pet that needs to be fetched | 
+ **pet_id** | **Integer**| ID of pet to return | 
 
 ### Return type
 
@@ -318,127 +269,17 @@ Name | Type | Description  | Notes
 
 ### Authorization
 
-[petstore_auth](../README.md#petstore_auth), [api_key](../README.md#api_key)
+[api_key](../README.md#api_key)
 
-### HTTP reuqest headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json, application/xml
-
-
-
-# **get_pet_by_id_in_object**
-> InlineResponse200 get_pet_by_id_in_object(pet_id)
-
-Fake endpoint to test inline arbitrary object return by &#39;Find pet by ID&#39;
-
-Returns a pet when ID &lt; 10.  ID &gt; 10 or nonintegers will simulate API error conditions
-
-### Example
-```ruby
-require 'petstore'
-
-Petstore.configure do |config|
-  # Configure OAuth2 access token for authorization: petstore_auth
-  config.access_token = "YOUR ACCESS TOKEN"
-
-  # Configure API key authorization: api_key
-  config.api_key['api_key'] = "YOUR API KEY"
-  # Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to nil)
-  #config.api_key_prefix['api_key'] = "Token"
-end
-
-api = Petstore::PetApi.new
-
-pet_id = 789 # [Integer] ID of pet that needs to be fetched
-
-
-begin
-  result = api.get_pet_by_id_in_object(pet_id)
-  p result
-rescue Petstore::ApiError => e
-  puts "Exception when calling get_pet_by_id_in_object: #{e}"
-end
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **pet_id** | **Integer**| ID of pet that needs to be fetched | 
-
-### Return type
-
-[**InlineResponse200**](InlineResponse200.md)
-
-### Authorization
-
-[petstore_auth](../README.md#petstore_auth), [api_key](../README.md#api_key)
-
-### HTTP reuqest headers
+### HTTP request headers
 
  - **Content-Type**: Not defined
- - **Accept**: application/json, application/xml
-
-
-
-# **pet_pet_idtesting_byte_arraytrue_get**
-> String pet_pet_idtesting_byte_arraytrue_get(pet_id)
-
-Fake endpoint to test byte array return by &#39;Find pet by ID&#39;
-
-Returns a pet when ID &lt; 10.  ID &gt; 10 or nonintegers will simulate API error conditions
-
-### Example
-```ruby
-require 'petstore'
-
-Petstore.configure do |config|
-  # Configure OAuth2 access token for authorization: petstore_auth
-  config.access_token = "YOUR ACCESS TOKEN"
-
-  # Configure API key authorization: api_key
-  config.api_key['api_key'] = "YOUR API KEY"
-  # Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to nil)
-  #config.api_key_prefix['api_key'] = "Token"
-end
-
-api = Petstore::PetApi.new
-
-pet_id = 789 # [Integer] ID of pet that needs to be fetched
-
-
-begin
-  result = api.pet_pet_idtesting_byte_arraytrue_get(pet_id)
-  p result
-rescue Petstore::ApiError => e
-  puts "Exception when calling pet_pet_idtesting_byte_arraytrue_get: #{e}"
-end
-```
-
-### Parameters
-
-Name | Type | Description  | Notes
-------------- | ------------- | ------------- | -------------
- **pet_id** | **Integer**| ID of pet that needs to be fetched | 
-
-### Return type
-
-**String**
-
-### Authorization
-
-[petstore_auth](../README.md#petstore_auth), [api_key](../README.md#api_key)
-
-### HTTP reuqest headers
-
- - **Content-Type**: Not defined
- - **Accept**: application/json, application/xml
+ - **Accept**: application/xml, application/json
 
 
 
 # **update_pet**
-> update_pet(opts)
+> update_pet(body)
 
 Update an existing pet
 
@@ -446,23 +287,24 @@ Update an existing pet
 
 ### Example
 ```ruby
+# load the gem
 require 'petstore'
-
+# setup authorization
 Petstore.configure do |config|
   # Configure OAuth2 access token for authorization: petstore_auth
-  config.access_token = "YOUR ACCESS TOKEN"
+  config.access_token = 'YOUR ACCESS TOKEN'
 end
 
-api = Petstore::PetApi.new
+api_instance = Petstore::PetApi.new
 
-opts = { 
-  body: Petstore::Pet.new # [Pet] Pet object that needs to be added to the store
-}
+body = Petstore::Pet.new # Pet | Pet object that needs to be added to the store
+
 
 begin
-  api.update_pet(opts)
+  #Update an existing pet
+  api_instance.update_pet(body)
 rescue Petstore::ApiError => e
-  puts "Exception when calling update_pet: #{e}"
+  puts "Exception when calling PetApi->update_pet: #{e}"
 end
 ```
 
@@ -470,7 +312,7 @@ end
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **body** | [**Pet**](Pet.md)| Pet object that needs to be added to the store | [optional] 
+ **body** | [**Pet**](Pet.md)| Pet object that needs to be added to the store | 
 
 ### Return type
 
@@ -480,10 +322,10 @@ nil (empty response body)
 
 [petstore_auth](../README.md#petstore_auth)
 
-### HTTP reuqest headers
+### HTTP request headers
 
  - **Content-Type**: application/json, application/xml
- - **Accept**: application/json, application/xml
+ - **Accept**: application/xml, application/json
 
 
 
@@ -496,26 +338,28 @@ Updates a pet in the store with form data
 
 ### Example
 ```ruby
+# load the gem
 require 'petstore'
-
+# setup authorization
 Petstore.configure do |config|
   # Configure OAuth2 access token for authorization: petstore_auth
-  config.access_token = "YOUR ACCESS TOKEN"
+  config.access_token = 'YOUR ACCESS TOKEN'
 end
 
-api = Petstore::PetApi.new
+api_instance = Petstore::PetApi.new
 
-pet_id = "pet_id_example" # [String] ID of pet that needs to be updated
+pet_id = 789 # Integer | ID of pet that needs to be updated
 
 opts = { 
-  name: "name_example", # [String] Updated name of the pet
-  status: "status_example" # [String] Updated status of the pet
+  name: "name_example", # String | Updated name of the pet
+  status: "status_example" # String | Updated status of the pet
 }
 
 begin
-  api.update_pet_with_form(pet_id, opts)
+  #Updates a pet in the store with form data
+  api_instance.update_pet_with_form(pet_id, opts)
 rescue Petstore::ApiError => e
-  puts "Exception when calling update_pet_with_form: #{e}"
+  puts "Exception when calling PetApi->update_pet_with_form: #{e}"
 end
 ```
 
@@ -523,7 +367,7 @@ end
 
 Name | Type | Description  | Notes
 ------------- | ------------- | ------------- | -------------
- **pet_id** | **String**| ID of pet that needs to be updated | 
+ **pet_id** | **Integer**| ID of pet that needs to be updated | 
  **name** | **String**| Updated name of the pet | [optional] 
  **status** | **String**| Updated status of the pet | [optional] 
 
@@ -535,15 +379,15 @@ nil (empty response body)
 
 [petstore_auth](../README.md#petstore_auth)
 
-### HTTP reuqest headers
+### HTTP request headers
 
  - **Content-Type**: application/x-www-form-urlencoded
- - **Accept**: application/json, application/xml
+ - **Accept**: application/xml, application/json
 
 
 
 # **upload_file**
-> upload_file(pet_id, opts)
+> ApiResponse upload_file(pet_id, opts)
 
 uploads an image
 
@@ -551,26 +395,29 @@ uploads an image
 
 ### Example
 ```ruby
+# load the gem
 require 'petstore'
-
+# setup authorization
 Petstore.configure do |config|
   # Configure OAuth2 access token for authorization: petstore_auth
-  config.access_token = "YOUR ACCESS TOKEN"
+  config.access_token = 'YOUR ACCESS TOKEN'
 end
 
-api = Petstore::PetApi.new
+api_instance = Petstore::PetApi.new
 
-pet_id = 789 # [Integer] ID of pet to update
+pet_id = 789 # Integer | ID of pet to update
 
 opts = { 
-  additional_metadata: "additional_metadata_example", # [String] Additional data to pass to server
-  file: File.new("/path/to/file.txt") # [File] file to upload
+  additional_metadata: "additional_metadata_example", # String | Additional data to pass to server
+  file: File.new("/path/to/file.txt") # File | file to upload
 }
 
 begin
-  api.upload_file(pet_id, opts)
+  #uploads an image
+  result = api_instance.upload_file(pet_id, opts)
+  p result
 rescue Petstore::ApiError => e
-  puts "Exception when calling upload_file: #{e}"
+  puts "Exception when calling PetApi->upload_file: #{e}"
 end
 ```
 
@@ -584,16 +431,16 @@ Name | Type | Description  | Notes
 
 ### Return type
 
-nil (empty response body)
+[**ApiResponse**](ApiResponse.md)
 
 ### Authorization
 
 [petstore_auth](../README.md#petstore_auth)
 
-### HTTP reuqest headers
+### HTTP request headers
 
  - **Content-Type**: multipart/form-data
- - **Accept**: application/json, application/xml
+ - **Accept**: application/json
 
 
 
