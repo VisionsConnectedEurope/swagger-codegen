@@ -35,6 +35,8 @@ io.swagger.codegen.languages.SwiftCodegen
 io.swagger.codegen.languages.TizenClientCodegen
 io.swagger.codegen.languages.TypeScriptAngularClientCodegen
 io.swagger.codegen.languages.TypeScriptNodeClientCodegen
+io.swagger.codegen.languages.VisionsConnectedJavaClientCodegen
+io.swagger.codegen.languages.VisionsConnectedSpringMVCServerCodegen
 io.swagger.codegen.languages.AkkaScalaClientCodegen
 io.swagger.codegen.languages.CsharpDotNet2ClientCodegen
 io.swagger.codegen.languages.ClojureClientCodegen

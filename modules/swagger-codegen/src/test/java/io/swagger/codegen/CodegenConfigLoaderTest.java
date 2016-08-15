@@ -53,6 +53,5 @@ public class CodegenConfigLoaderTest {
         assertEquals(loadedConfig.getClass(), codegenConfig.getClass());
         assertEquals(loadedConfig.getName(), codegenConfig.getName());
 
-
     }
 }
