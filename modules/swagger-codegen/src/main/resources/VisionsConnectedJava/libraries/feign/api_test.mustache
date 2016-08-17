@@ -1,10 +1,9 @@
-{{>licenseInfo}}
-
 package {{package}};
 
-import {{invokerPackage}}.ApiException;
+import {{invokerPackage}}.ApiClient;
 {{#imports}}import {{import}};
 {{/imports}}
+import org.junit.Before;
 import org.junit.Test;
 
 {{^fullJavaUtil}}
@@ -19,19 +18,21 @@ import java.util.Map;
  */
 public class {{classname}}Test {
 
-    private final {{classname}} api = new {{classname}}();
+    private {{classname}} api;
+
+    @Before
+    public void setup() {
+        api = new ApiClient().buildClient({{classname}}.class);
+    }
 
     {{#operations}}{{#operation}}
     /**
      * {{summary}}
      *
      * {{notes}}
-     *
-     * @throws ApiException
-     *          if the Api call fails
      */
     @Test
-    public void {{operationId}}Test() throws ApiException {
+    public void {{operationId}}Test() {
         {{#allParams}}
         {{{dataType}}} {{paramName}} = null;
         {{/allParams}}

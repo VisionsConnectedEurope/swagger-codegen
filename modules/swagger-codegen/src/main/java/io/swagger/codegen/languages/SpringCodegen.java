@@ -87,6 +87,7 @@ public class SpringCodegen extends AbstractJavaCodegen {
         modelDocTemplateFiles.remove("model_doc.mustache");
         apiDocTemplateFiles.remove("api_doc.mustache");
 
+
         if (additionalProperties.containsKey(TITLE)) {
             this.setTitle((String) additionalProperties.get(TITLE));
         }

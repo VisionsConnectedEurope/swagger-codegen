@@ -82,7 +82,6 @@ public class JavaClientCodegen extends AbstractJavaCodegen {
         writeOptional(outputFolder, new SupportingFile("settings.gradle.mustache", "", "settings.gradle"));
         writeOptional(outputFolder, new SupportingFile("gradle.properties.mustache", "", "gradle.properties"));
         writeOptional(outputFolder, new SupportingFile("manifest.mustache", projectFolder, "AndroidManifest.xml"));
-        supportingFiles.add(new SupportingFile("travis.mustache", "", ".travis.yml"));
         supportingFiles.add(new SupportingFile("ApiClient.mustache", invokerFolder, "ApiClient.java"));
         supportingFiles.add(new SupportingFile("StringUtil.mustache", invokerFolder, "StringUtil.java"));
         supportingFiles.add(new SupportingFile("auth/HttpBasicAuth.mustache", authFolder, "HttpBasicAuth.java"));

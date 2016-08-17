@@ -7,13 +7,13 @@ public class {{classname}} {{#parent}}extends {{{parent}}}{{/parent}} {{#seriali
   {{#vars}}
     {{#isEnum}}
     {{^isContainer}}
-{{>modelInnerEnum}}
+{{>enumClass}}
     {{/isContainer}}
     {{/isEnum}}
     {{#items.isEnum}}
       {{#items}}
       {{^isContainer}}
-{{>modelInnerEnum}}
+{{>enumClass}}
       {{/isContainer}}
       {{/items}}
     {{/items.isEnum}}

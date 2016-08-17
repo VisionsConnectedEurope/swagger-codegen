@@ -53,12 +53,12 @@ public class VisionsConnectedSpringMVCServerCodegen extends AbstractJavaCodegen 
         supportedLibraries.put(DEFAULT_LIBRARY, "Spring-boot Server application using the SpringFox integration.");
         supportedLibraries.put(SPRING_MVC_LIBRARY, "Spring-MVC Server application using the SpringFox integration.");
         supportedLibraries.put(SPRING_CLOUD_LIBRARY, "Spring-Cloud-Feign client with Spring-Boot auto-configured settings.");
-        setLibrary(SPRING_MVC_LIBRARY);
+        setLibrary(DEFAULT_LIBRARY);
 
         CliOption library = new CliOption(CodegenConstants.LIBRARY, "library template (sub-template) to use");
-        library.setDefault(SPRING_MVC_LIBRARY);
+        library.setDefault(DEFAULT_LIBRARY);
         library.setEnum(supportedLibraries);
-        library.setDefault(SPRING_MVC_LIBRARY);
+        library.setDefault(DEFAULT_LIBRARY);
         cliOptions.add(library);
     }
 
@@ -128,7 +128,6 @@ public class VisionsConnectedSpringMVCServerCodegen extends AbstractJavaCodegen 
                     ("src.main.resources").replace(".", java.io.File.separator), "application.properties"));
             }
             if (library.equals(SPRING_MVC_LIBRARY)) {
-                //apiTemplateFiles.put("api.mustache", "Api.java");
                 supportingFiles.add(new SupportingFile("errorSpec.mustache",
                     (sourceFolder + File.separator + apiPackage).replace(".", File.separator), "ErrorSpec.java"));
                 supportingFiles.add(new SupportingFile("apiException.mustache",
@@ -149,14 +148,9 @@ public class VisionsConnectedSpringMVCServerCodegen extends AbstractJavaCodegen 
                 if (!additionalProperties.containsKey(SINGLE_CONTENT_TYPES)) {
                     additionalProperties.put(SINGLE_CONTENT_TYPES, "true");
                     this.setSingleContentTypes(true);
-
                 }
 
             } else {
-                //apiTemplateFiles.put("api.mustache", "SApi.java");
-
-                supportingFiles.add(new SupportingFile("errorSpec.mustache",
-                    (sourceFolder + File.separator + apiPackage).replace(".", File.separator), "ErrorSpec.java"));
                 supportingFiles.add(new SupportingFile("apiException.mustache",
                     (sourceFolder + File.separator + apiPackage).replace(".", java.io.File.separator), "ApiException.java"));
                 supportingFiles.add(new SupportingFile("apiResponseMessage.mustache",

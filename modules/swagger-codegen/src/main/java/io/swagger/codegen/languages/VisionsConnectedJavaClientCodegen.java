@@ -28,7 +28,7 @@ public class VisionsConnectedJavaClientCodegen extends AbstractJavaCodegen {
         outputFolder = "generated-code" + File.separator + "java";
         embeddedTemplateDir = templateDir = "VisionsConnectedJava";
         invokerPackage = "io.swagger.client";
-        artifactId = "swagger-visionsconnected-java-client";
+        artifactId = "swagger-java-client";
         apiPackage = "io.swagger.client.api";
         modelPackage = "io.swagger.client.model";
 
@@ -69,6 +69,8 @@ public class VisionsConnectedJavaClientCodegen extends AbstractJavaCodegen {
     @Override
     public void processOpts() {
         super.processOpts();
+        // no tests generation
+        apiTestTemplateFiles.remove("api_test.mustache");
 
         if (additionalProperties.containsKey(USE_RX_JAVA)) {
             this.setUseRxJava(Boolean.valueOf(additionalProperties.get(USE_RX_JAVA).toString()));
