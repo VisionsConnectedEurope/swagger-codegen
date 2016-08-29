@@ -54,7 +54,7 @@ public class {{classname}} {
     {{/hasMore}}{{/authMethods}}
   }{{/hasAuthMethods}})
   @ApiResponses(value = { {{#responses}} @ApiResponse(code = {{{code}}}, message = "{{{message}}}"){{#hasMore}},{{/hasMore}}{{/responses}} })
-  @RequestMapping(value = "/{{baseName}}{{path}}",
+  @RequestMapping(value =  "{{{path}}}",
     {{#hasProduces}}produces = { {{#produces}}"{{mediaType}}"{{#hasMore}}, {{/hasMore}}{{/produces}} }, {{/hasProduces}}
     {{#hasConsumes}}consumes = { {{#consumes}}"{{mediaType}}"{{#hasMore}}, {{/hasMore}}{{/consumes}} },{{/hasConsumes}}
     method = RequestMethod.{{httpMethod}})
